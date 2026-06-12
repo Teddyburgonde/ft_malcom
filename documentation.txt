@@ -1,0 +1,156 @@
+Objectif:
+
+Créer un programme C qui fait une attaque ARP spoofing
+
+-------------------------
+
+Notions: 
+
+ARP request: ✅️ 
+C'est un message qu'on envoie sur le réseau pour dire 
+"J'ai une ip, qui me dire: quelle est adresse MAC de cette adresse IP.
+
+IP / MAC:  ✅️
+Ip c'est adresse de l'ordinateur sur le réseau
+Mac c'est adresse de la carte réseau de l'ordinateur
+Pour communiquer il faut IP et le MAC du destinataire.
+
+Le flow: ✅️
+
+1. A envoie une ARP request: "Qui a l'IP de B? Dites-moi votre MAC!"
+2. Je réponds avec une fausse MAC address à la place de B (ARP spoofing)
+3. A reçoit la réponse et mémorise: "Cette IP -> Cette MAC"
+4. A m'envoie le paquet.
+
+Raw Sockets: ✅️
+C'est un outil qui permet de construire moi même mes paquets.
+
+Structure ARP: ✅️
+Comment est construit un paquet ARP
+- Je crée un paquet ARP
+- Je le mets dans un Ethernet Frame (wrapper)
+- Je l'envoie à A
+
+Network Byte Order (htons, ntohl): ✅️
+Le réseau parle en "big endian"
+uint16_t port = htons(8080);  // htons convertit 8080 en big endian
+
+Ethernet Frame: ✅️
+C'est le "wrapper" autour du paquet ARP (header Ethernet)
+1. Créer la structure Ethernet Frame
+2. La remplir avec les bonnes valeurs
+3. Y mettre le paquet ARP dedans
+4. Envoyer le tout
+
+Broadcast: ✅️
+Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
+
+------------------------
+
+=== ROADMAP ft_malcolm ===
+
+1. SETUP & PRÉPARATION
+─ Créer structure s_arp_packet ✅
+─ Créer structure Ethernet Frame ✅
+─ Créer fichier main.c ✅
+─ Créer Makefile ✅
+
+2. PARSING DES ARGUMENTS
+─ Vérifier qu'on a exactement 4 arguments ❌
+─ Extraire source_ip, source_mac, target_ip, target_mac ❌
+─ Créer struct pour stocker ces 4 arguments ❌
+
+3. VALIDATION DES ARGUMENTS
+─ Vérifier source_ip est valide (inet_pton) ❌
+─ Vérifier source_mac est valide (format xx:xx:xx:xx:xx:xx) ❌
+─ Vérifier target_ip est valide (inet_pton) ❌
+─ Vérifier target_mac est valide (format xx:xx:xx:xx:xx:xx) ❌
+─ Afficher les erreurs exactes du sujet ❌
+─ Vérifier qu'on est ROOT (is_root()) ❌
+
+4. GESTION DES SIGNAUX
+─ Implémenter signal handler pour Ctrl+C ❌
+─ Utiliser g_running pour quitter proprement ❌
+
+5. SOCKET & RÉSEAU
+─ Créer une raw socket (AF_PACKET) ❌
+─ Bind la socket à une interface réseau ❌
+─ Activer IP_HDRINCL si nécessaire ❌
+─ Tester qu'elle se crée sans erreur ❌
+
+6. ATTENDRE UNE REQUÊTE ARP
+─ Boucle d'écoute sur la socket (recvfrom) ❌
+─ Détecter les paquets ARP ❌
+─ Filtrer pour capturer UNIQUEMENT les requêtes ARP (operation=1) ❌
+─ Vérifier que la requête demande target_ip ❌
+─ Parser les infos de la requête ❌
+
+7. CONSTRUIRE LA RÉPONSE ARP FALSIFIÉE
+─ Créer le header Ethernet (destination, source, type) ❌
+─ Créer le paquet ARP avec:
+  ├─ operation = 2 (Reply) ❌
+  ├─ sender_mac = source_mac (FALSIFIÉE) ❌
+  ├─ sender_ip = source_ip (FALSIFIÉE) ❌
+  ├─ target_mac = MAC de la requête ❌
+  └─ target_ip = IP de la requête ❌
+─ Convertir les champs en network byte order (htons) ❌
+
+8. ENVOYER LA RÉPONSE ARP
+─ Envoyer le paquet via sendto ❌
+─ Vérifier l'envoi (pas d'erreur) ❌
+─ Afficher confirmation (optionnel) ❌
+
+9. QUITTER PROPREMENT
+─ Fermer la socket (close) ❌
+─ Libérer la mémoire ❌
+─ Afficher "Exiting program..." ❌
+─ Exit code 0 ❌
+
+10. GESTION D'ERREURS GLOBALE
+─ Aucun crash (segfault, etc) ❌
+─ Gestion des erreurs socket ❌
+─ Messages d'erreur exacts du sujet ❌
+─ Cleanup même en cas d'erreur ❌
+
+11. TEST FINAL
+─ Compiler sans erreur ❌
+─ Tester avec les bons arguments ❌
+─ Tester avec arguments invalides ❌
+─ Tester Ctrl+C ❌
+─ Vérifier table ARP de la cible ❌
+
+
+
+
+
+
+----
+ROADMAP 
+
+1. Parsing: 
+4 arguments ->
+source_ip source_mac target_ip target_mac
+source_ip -> IP a usurper
+source_mac -> La MAC falsifiée que j'invente
+target_it -> IP de B (La cible)
+target_mac -> La MAC de B
+
+Exemple:
+./ft_malcolm 10.12.255.255 ff:bb:ff:ff:ee:ff 10.12.10.22 10:dd:b1:xx:xx:xx
+
+2. Créer une socket raw pour écouter le réseau
+
+3. Attendre une requête ARP
+
+4. Envoyer une réponse ARP falsifiée
+
+5. Quitter
+
+6. Gérer les erreurs proprement
+
+------------------------------------------------- 
+
+Divers:
+
+AF_PACKET c'est pour manipuler les frames 
+htons(ETHP_P_ARP) filtre pour capturer uniquement les paquet ARP 
