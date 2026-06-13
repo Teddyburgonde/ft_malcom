@@ -69,8 +69,8 @@ Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
 ─ Vérifier qu'on est ROOT (is_root()) ✅
 
 4. GESTION DES SIGNAUX
-─ Implémenter signal handler pour Ctrl+C ❌
-─ Utiliser g_running pour quitter proprement ❌
+─ Implémenter signal handler pour Ctrl+C ✅
+─ Utiliser g_running pour quitter proprement ❌ (besoin de la boucle d'écoute)
 
 5. SOCKET & RÉSEAU
 ─ Créer une raw socket (AF_PACKET) ❌
