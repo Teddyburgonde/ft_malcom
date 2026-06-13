@@ -12,8 +12,7 @@ SRCS		= main.c \
 			  signal.c \
 			  socket.c \
 			  network.c \
-			  arp.c \
-			  dns.c
+			  arp.c
 
 OBJS		= $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
 

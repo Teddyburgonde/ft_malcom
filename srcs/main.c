@@ -5,12 +5,15 @@ volatile sig_atomic_t	g_running = true;
 
 int	main(int argc, char **argv)
 {
-	if (argc != 5)
+	t_config	cfg;
+
+	if (!is_root())
 	{
-		printf("Usage: %s <source_ip> <source_mac> <target_ip> <target_mac>\n",
-			argv[0]);
+		fprintf(stderr, "ft_malcolm: you must be root to run this program.\n");
 		return (1);
 	}
-	/* TODO: parsing, signal, socket, wait_arp_request, send_arp_reply */
+	if (parse_arguments(argc, argv, &cfg) < 0)
+		return (1);
+	/* TODO: signal, socket, wait_arp_request, send_arp_reply */
 	return (0);
 }
