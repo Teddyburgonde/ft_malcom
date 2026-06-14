@@ -22,7 +22,7 @@
 # include <net/if.h>
 # include <ifaddrs.h>
 
-/* Spécifique Linux (raw socket niveau 2)                                    */
+
 # include <netpacket/packet.h>
 # include <net/ethernet.h>
 # include <linux/if_ether.h>
@@ -82,8 +82,7 @@ typedef struct s_config
 /*                            VARIABLE GLOBALE                                */
 /* ************************************************************************** */
 
-/* Seule variable globale autorisée : flag de la boucle d'écoute (Ctrl+C).   */
-/* Définie dans main.c, déclarée extern ici pour être visible partout.       */
+/* Variable globale */
 extern volatile sig_atomic_t	g_running;
 
 /* ************************************************************************** */

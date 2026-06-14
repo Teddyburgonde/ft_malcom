@@ -1,14 +1,14 @@
 === CONTEXTE DE SESSION - ft_malcolm ===
 (à donner à une nouvelle fenêtre Claude pour reprendre où on en est)
 
-ÉTAT D'AVANCEMENT : ~37% de la roadmap (voir documentation.txt)
+ÉTAT D'AVANCEMENT : ~50% de la roadmap (23/46, voir documentation.txt)
 
 CE QUI EST FAIT :
 - Sections 1-3 (setup, parsing, validation des arguments) : 100% ✅
-- Section 4 (signaux) : handler Ctrl+C écrit, mais pas encore branché dans la boucle
-  d'attente principale (wait_arp_request utilise déjà g_running, mais main() ne
-  l'appelle pas encore)
-- Section 5 (socket & réseau) : 100% écrit
+- Section 4 (signaux) : 100% ✅
+  - Handler Ctrl+C (signal.c) + g_running utilisé dans wait_arp_request, branché
+    dans main.c
+- Section 5 (socket & réseau) : 2/3 ✅
   - create_raw_socket() (socket.c) : AF_PACKET + ETH_P_ARP + timeout 5s
   - find_network_interface() (network.c) : trouve la carte réseau active (hors loopback)
   - bind_network_interface() (network.c) : bind la socket sur l'interface trouvée
@@ -16,19 +16,31 @@ CE QUI EST FAIT :
   - Toutes ces fonctions sont appelées dans main.c
   - Reste : tester en conditions réelles sur la VM (pas possible pour l'instant,
     pas d'accès VM)
-- Section 6 (attendre une requête ARP) : wait_arp_request() écrite dans arp.c
-  - Boucle while(g_running) + recvfrom + gestion timeout (EAGAIN/EWOULDBLOCK)
+- Section 6 (attendre une requête ARP) : 100% ✅
+  - wait_arp_request() (arp.c) : boucle while(g_running) + recvfrom + gestion
+    timeout (EAGAIN/EWOULDBLOCK)
   - Vérifie ntohs(arp->operation) == ARP_REQUEST && arp->target_ip == cfg->source_ip.s_addr
   - Retourne 1 si trouvée, 0 si Ctrl+C
-  - PAS ENCORE APPELÉE depuis main.c (TODO commenté ligne 23 de main.c)
+  - Appelée dans main.c : found = wait_arp_request(raw_socket_fd, &cfg);
+    if (found) { /* TODO: send_arp_reply */ }
+- Section 9 : close(raw_socket_fd) déjà fait dans main.c ✅ (1/4)
 
 CE QUI RESTE À FAIRE :
-- Brancher wait_arp_request() dans main.c
-- Section 7 : construire la réponse ARP falsifiée (header Ethernet + paquet ARP,
-  operation=2, sender_mac/ip = source falsifiés, target_mac/ip = ceux de cfg)
-- Section 8 : envoyer la réponse via sendto (send_arp_reply dans arp.c)
-- Section 9 : cleanup (close socket, message "Exiting program...", exit 0)
-- Section 10 : vérifier gestion d'erreurs globale
+- Section 7 (la plus grosse partie restante) : construire la réponse ARP falsifiée
+  dans send_arp_reply() (arp.c, prototype déjà dans ft_malcom.h)
+  - Header Ethernet (dest_mac = MAC de l'émetteur de la requête, src_mac = source_mac
+    falsifiée, ethertype = ETH_P_ARP)
+  - Paquet ARP : operation = ARP_REPLY (2), sender_mac = cfg->source_mac (falsifiée),
+    sender_ip = cfg->source_ip (falsifiée), target_mac/ip = ceux de cfg->target_mac/target_ip
+  - Conversion network byte order (htons) pour hw_type, proto_type, operation
+  - NOTE : il faudra récupérer sender_mac de la requête ARP reçue (dans
+    wait_arp_request ou en relisant un recvfrom) pour le header Ethernet destination
+    -> à voir comment passer cette info, ou si on utilise directement cfg->target_mac
+- Section 8 : envoyer la trame via sendto + vérifier le retour
+- Section 9 : reste "Exiting program...", exit code 0, libération mémoire (peu de
+  malloc dans ce projet)
+- Section 10 : relecture gestion d'erreurs globale (en grande partie déjà fait au
+  fil de l'eau)
 - Section 11 : tests réels sur la VM (nécessite l'accès VM)
 
 PRÉFÉRENCES DE TRAVAIL (déjà dans CLAUDE.md) :
@@ -43,3 +55,4 @@ COMMANDES PERSONNALISÉES (.claude/commands/) :
 - /explique : "Je t'explique ce que fait le code et tu me dis si c'est bon ou pas"
 - /push "message" : commit + push avec ce message
 - /context : génère ce fichier de résumé
+- /progress : pourcentage d'avancement + estimation du temps restant

@@ -3,7 +3,7 @@
 /*
 ** Attend en boucle arrivé d'une requête ARP qui demande l'IP de la machine qu'on usurpe.
 */
-int	wait_arp_request(int sock, t_config *cfg)
+int	wait_arp_request(int raw_socket_fd, t_config *cfg)
 {
 	unsigned char	buffer[42];
 	t_arp_packet	*arp;
@@ -12,7 +12,7 @@ int	wait_arp_request(int sock, t_config *cfg)
 	arp = (t_arp_packet *)(buffer + sizeof(t_ethernet_frame));
 	while (g_running)
 	{
-		check = recvfrom(sock, buffer, sizeof(buffer), 0, NULL, NULL);
+		check = recvfrom(raw_socket_fd, buffer, sizeof(buffer), 0, NULL, NULL);
 		if (check < 0)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)

@@ -8,6 +8,7 @@ int	main(int argc, char **argv)
 	t_config	cfg;
 	int			raw_socket_fd;
 	char		*interface;
+	int			found;
 
 	if (!is_root())
 	{
@@ -20,7 +21,11 @@ int	main(int argc, char **argv)
 	raw_socket_fd = create_raw_socket();
 	interface = find_network_interface();
 	bind_network_interface(raw_socket_fd, interface);
-	/* TODO: wait_arp_request, send_arp_reply */
+	found = wait_arp_request(raw_socket_fd, &cfg);
+	if (found)
+	{
+		/* TODO: send_arp_reply */
+	}
 	close(raw_socket_fd);
 	return (0);
 }
