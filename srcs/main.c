@@ -6,6 +6,8 @@ volatile sig_atomic_t	g_running = true;
 int	main(int argc, char **argv)
 {
 	t_config	cfg;
+	int			raw_socket_fd;
+	char		*interface;
 
 	if (!is_root())
 	{
@@ -14,6 +16,11 @@ int	main(int argc, char **argv)
 	}
 	if (parse_arguments(argc, argv, &cfg) < 0)
 		return (1);
-	/* TODO: signal, socket, wait_arp_request, send_arp_reply */
+	setup_signal();
+	raw_socket_fd = create_raw_socket();
+	interface = find_network_interface();
+	bind_network_interface(raw_socket_fd, interface);
+	/* TODO: wait_arp_request, send_arp_reply */
+	close(raw_socket_fd);
 	return (0);
 }
