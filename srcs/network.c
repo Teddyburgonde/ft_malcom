@@ -1,24 +1,6 @@
 #include "ft_malcom.h"
 
 /*
-** Copie src vers dest
-*/
-static char	*ft_strcpy(char *dest, const char *src)
-{
-	int	i;
-
-	i = 0;
-	while (src[i] != '\0')
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = '\0';
-	return (dest);
-}
-
-
-/*
 ** Lie (bind) la raw socket à la carte réseau passée en paramètre,
 ** pour n'envoyer/recevoir les paquets ARP que sur cette interface.
 */

@@ -89,6 +89,10 @@ extern volatile sig_atomic_t	g_running;
 /*                               PROTOTYPES                                   */
 /* ************************************************************************** */
 
+/* utils.c */
+char	*ft_strcpy(char *dest, const char *src);
+void	*ft_memcpy(void *dest, const void *src, size_t n);
+
 /* parsing.c */
 int		ip_string_to_binary(const char *ip_str, struct in_addr *ip_addr);
 int		mac_string_to_binary(const char *mac_str, uint8_t *mac);
@@ -108,6 +112,6 @@ int		bind_network_interface(int sock, const char *interface);
 
 /* arp.c */
 int		wait_arp_request(int raw_socket_fd, t_config *cfg);
-int		send_arp_reply(int raw_socket_fd, t_config *cfg);
+int		send_arp_reply(int raw_socket_fd, t_config *cfg, const char *interface);
 
 #endif

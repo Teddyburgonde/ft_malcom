@@ -1,7 +1,7 @@
 === CONTEXTE DE SESSION - ft_malcolm ===
 (à donner à une nouvelle fenêtre Claude pour reprendre où on en est)
 
-ÉTAT D'AVANCEMENT : ~50% de la roadmap (23/46, voir documentation.txt)
+ÉTAT D'AVANCEMENT : ~70% de la roadmap (voir documentation.txt)
 
 CE QUI EST FAIT :
 - Sections 1-3 (setup, parsing, validation des arguments) : 100% ✅
@@ -23,23 +23,25 @@ CE QUI EST FAIT :
   - Retourne 1 si trouvée, 0 si Ctrl+C
   - Appelée dans main.c : found = wait_arp_request(raw_socket_fd, &cfg);
     if (found) { /* TODO: send_arp_reply */ }
+- Section 7 (construire la reply) : 100% ✅
+  - send_arp_reply(raw_socket_fd, cfg, interface) (arp.c) implémentée
+  - Header Ethernet : dest_mac = cfg->target_mac, src_mac = cfg->source_mac (falsifié),
+    ethertype = htons(ETH_P_ARP)
+  - fill_arp_packet() (static, arp.c) : remplit le paquet ARP (operation = ARP_REPLY,
+    sender = IP/MAC falsifiés, target = cfg->target_*), htons sur les champs 2 octets
+  - Décision prise : on utilise cfg->target_mac (arg 4) pour le dest Ethernet,
+    pas besoin de récupérer le sender_mac de la requête
+  - eth + arp collés dans buffer via ft_memcpy
+- Section 8 (envoyer) : sendto via une struct sockaddr_ll (sll_ifindex =
+  if_nametoindex(interface)), vérif du retour ✅. Appelée dans main.c.
+- utils.c créé : ft_strcpy (déplacé depuis network.c, plus static) + ft_memcpy
+  (copie binaire, ne s'arrête pas aux \0). Prototypes dans ft_malcom.h, ajouté au Makefile.
 - Section 9 : close(raw_socket_fd) déjà fait dans main.c ✅ (1/4)
-- send_arp_reply() : squelette créé dans arp.c (paramètres (void), return (0),
-  commentaire "// A FAIRE") pour que ça compile. À implémenter (section 7-8).
 
 CE QUI RESTE À FAIRE :
-- Section 7 (la plus grosse partie restante) : implémenter send_arp_reply()
-  (arp.c, squelette déjà présent, prototype dans ft_malcom.h)
-  - Header Ethernet (dest_mac = MAC de l'émetteur de la requête, src_mac = source_mac
-    falsifiée, ethertype = ETH_P_ARP)
-  - Paquet ARP : operation = ARP_REPLY (2), sender_mac = cfg->source_mac (falsifiée),
-    sender_ip = cfg->source_ip (falsifiée), target_mac/ip = ceux de cfg->target_mac/target_ip
-  - Conversion network byte order (htons) pour hw_type, proto_type, operation
-  - NOTE : il faudra récupérer sender_mac de la requête ARP reçue (dans
-    wait_arp_request ou en relisant un recvfrom) pour le header Ethernet destination
-    -> à voir comment passer cette info, ou si on utilise directement cfg->target_mac
-- Section 8 : envoyer la trame via sendto + vérifier le retour
-- Section 9 : reste "Exiting program...", exit code 0, libération mémoire (peu de
+- Vérifier le padding des structures (sizeof(eth)+sizeof(arp) doit faire 42) :
+  ajouter __attribute__((packed)) si besoin -> À TRANCHER
+- Section 9 : "Exiting program...", exit code 0, libération mémoire (peu de
   malloc dans ce projet)
 - Section 10 : relecture gestion d'erreurs globale (en grande partie déjà fait au
   fil de l'eau)

@@ -85,18 +85,18 @@ Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
 ─ Parser les infos de la requête : non nécessaire, tout est déjà dans cfg (source_ip/mac, target_ip/mac)
 
 7. CONSTRUIRE LA RÉPONSE ARP FALSIFIÉE
-─ Créer le header Ethernet (destination, source, type) ❌
-─ Créer le paquet ARP avec:
-  ├─ operation = 2 (Reply) ❌
-  ├─ sender_mac = source_mac (FALSIFIÉE) ❌
-  ├─ sender_ip = source_ip (FALSIFIÉE) ❌
-  ├─ target_mac = MAC de la requête ❌
-  └─ target_ip = IP de la requête ❌
-─ Convertir les champs en network byte order (htons) ❌
+─ Créer le header Ethernet (destination, source, type) ✅
+─ Créer le paquet ARP avec (fill_arp_packet) :
+  ├─ operation = 2 (Reply) ✅
+  ├─ sender_mac = source_mac (FALSIFIÉE) ✅
+  ├─ sender_ip = source_ip (FALSIFIÉE) ✅
+  ├─ target_mac = MAC de la requête (cfg->target_mac) ✅
+  └─ target_ip = IP de la requête (cfg->target_ip) ✅
+─ Convertir les champs en network byte order (htons) ✅
 
 8. ENVOYER LA RÉPONSE ARP
-─ Envoyer le paquet via sendto ❌
-─ Vérifier l'envoi (pas d'erreur) ❌
+─ Envoyer le paquet via sendto ✅
+─ Vérifier l'envoi (pas d'erreur) ✅
 ─ Afficher confirmation (optionnel) ❌
 
 9. QUITTER PROPREMENT

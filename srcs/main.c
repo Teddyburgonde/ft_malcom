@@ -23,9 +23,7 @@ int	main(int argc, char **argv)
 	bind_network_interface(raw_socket_fd, interface);
 	found = wait_arp_request(raw_socket_fd, &cfg);
 	if (found)
-	{
-		/* TODO: send_arp_reply */
-	}
+		send_arp_reply(raw_socket_fd, &cfg, interface);
 	close(raw_socket_fd);
 	return (0);
 }
