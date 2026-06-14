@@ -104,7 +104,8 @@ int		create_raw_socket(void);
 int		is_root(void);
 
 /* network.c */
-char	*find_interface(void);
+char	*find_network_interface(void);
+int		bind_network_interface(int sock, const char *interface);
 
 /* arp.c */
 int		wait_arp_request(int sock, t_config *cfg);

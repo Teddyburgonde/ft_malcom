@@ -73,8 +73,8 @@ Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
 ─ Utiliser g_running pour quitter proprement ❌ (besoin de la boucle d'écoute)
 
 5. SOCKET & RÉSEAU
-─ Créer une raw socket (AF_PACKET) ❌
-─ Bind la socket à une interface réseau ❌
+─ Créer une raw socket (AF_PACKET) ✅
+─ Bind la socket à une interface réseau ✅
 ─ Activer IP_HDRINCL si nécessaire ❌
 ─ Tester qu'elle se crée sans erreur ❌
 
