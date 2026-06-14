@@ -75,15 +75,14 @@ Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
 5. SOCKET & RÉSEAU
 ─ Créer une raw socket (AF_PACKET) ✅
 ─ Bind la socket à une interface réseau ✅
-─ Activer IP_HDRINCL si nécessaire ❌
 ─ Tester qu'elle se crée sans erreur ❌
 
 6. ATTENDRE UNE REQUÊTE ARP
-─ Boucle d'écoute sur la socket (recvfrom) ❌
-─ Détecter les paquets ARP ❌
-─ Filtrer pour capturer UNIQUEMENT les requêtes ARP (operation=1) ❌
-─ Vérifier que la requête demande target_ip ❌
-─ Parser les infos de la requête ❌
+─ Boucle d'écoute sur la socket (recvfrom) ✅
+─ Détecter les paquets ARP ✅
+─ Filtrer pour capturer UNIQUEMENT les requêtes ARP (operation=1) ✅
+─ Vérifier que la requête demande source_ip ✅
+─ Parser les infos de la requête : non nécessaire, tout est déjà dans cfg (source_ip/mac, target_ip/mac)
 
 7. CONSTRUIRE LA RÉPONSE ARP FALSIFIÉE
 ─ Créer le header Ethernet (destination, source, type) ❌

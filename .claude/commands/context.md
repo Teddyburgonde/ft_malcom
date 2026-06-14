@@ -1,0 +1,1 @@
+Fais-moi un résumé de la session actuelle (ce qu'on a fait, où on en est, les prochaines étapes), comme ça je peux donner ce contexte à une autre fenêtre de Claude. Mets ce résumé dans le fichier context_actuel.txt.
