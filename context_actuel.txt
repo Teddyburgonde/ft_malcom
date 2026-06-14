@@ -24,10 +24,12 @@ CE QUI EST FAIT :
   - Appelée dans main.c : found = wait_arp_request(raw_socket_fd, &cfg);
     if (found) { /* TODO: send_arp_reply */ }
 - Section 9 : close(raw_socket_fd) déjà fait dans main.c ✅ (1/4)
+- send_arp_reply() : squelette créé dans arp.c (paramètres (void), return (0),
+  commentaire "// A FAIRE") pour que ça compile. À implémenter (section 7-8).
 
 CE QUI RESTE À FAIRE :
-- Section 7 (la plus grosse partie restante) : construire la réponse ARP falsifiée
-  dans send_arp_reply() (arp.c, prototype déjà dans ft_malcom.h)
+- Section 7 (la plus grosse partie restante) : implémenter send_arp_reply()
+  (arp.c, squelette déjà présent, prototype dans ft_malcom.h)
   - Header Ethernet (dest_mac = MAC de l'émetteur de la requête, src_mac = source_mac
     falsifiée, ethertype = ETH_P_ARP)
   - Paquet ARP : operation = ARP_REPLY (2), sender_mac = cfg->source_mac (falsifiée),

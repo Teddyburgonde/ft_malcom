@@ -12,7 +12,7 @@
 
 - Quand l'utilisateur dit **"push"**, exécuter `git push` (commit au préalable si nécessaire, puis push vers le remote).
 - Quand l'utilisateur dit **"push"** en fournissant le message de commit, commiter avec ce message et pusher **directement**, sans attendre de confirmation/clic supplémentaire.
-- **Avant chaque push**, mettre à jour la roadmap dans `documentation.txt`.
+- **Avant chaque push**, mettre à jour la roadmap dans `documentation.txt` et le résumé dans `context_actuel.txt`.
 - Code : utiliser des **tabulations** pour l'indentation, jamais d'espaces.
 - Code : **jamais de `return` direct d'une expression** — toujours stocker le résultat dans une variable puis retourner la variable.
   - ❌ `return (c - '0');`
