@@ -107,7 +107,7 @@ char	*find_network_interface(void);
 int		bind_network_interface(int sock, const char *interface);
 
 /* arp.c */
-int		wait_arp_request(int sock, t_config *cfg);
-int		send_arp_reply(int sock, t_config *cfg);
+int		wait_arp_request(int raw_socket_fd, t_config *cfg);
+int		send_arp_reply(int raw_socket_fd, t_config *cfg);
 
 #endif

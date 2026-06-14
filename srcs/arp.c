@@ -26,3 +26,11 @@ int	wait_arp_request(int raw_socket_fd, t_config *cfg)
 	}
 	return (0);
 }
+
+// A FAIRE
+int	send_arp_reply(int raw_socket_fd, t_config *cfg)
+{
+	(void)raw_socket_fd;
+	(void)cfg;
+	return (0);
+}
