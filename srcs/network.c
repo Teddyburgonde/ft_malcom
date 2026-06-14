@@ -1,5 +1,27 @@
 #include "ft_malcom.h"
 
+/*
+** Copie src vers dest
+*/
+static char	*ft_strcpy(char *dest, const char *src)
+{
+	int	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
+
+
+/*
+** Lie (bind) la raw socket à la carte réseau passée en paramètre,
+** pour n'envoyer/recevoir les paquets ARP que sur cette interface.
+*/
 int	bind_network_interface(int raw_socket_fd, const char *interface)
 {
 	struct sockaddr_ll	sll;
@@ -27,15 +49,37 @@ int	bind_network_interface(int raw_socket_fd, const char *interface)
 
 
 /*
-
-find_network_interface()
-Déclarer struct ifaddrs *ifap et un buffer static char name[IF_NAMESIZE]
-Appeler getifaddrs(&ifap), vérifier erreur (< 0 → perror + exit)
-Boucler sur la liste chaînée (ifa_next)
-Pour chaque élément, tester : IFF_UP actif ET IFF_LOOPBACK absent
-Si trouvé : copier ifa_name dans name, faire freeifaddrs(ifap), retourner name
-Si la boucle se termine sans rien trouver : freeifaddrs(ifap) + message d'erreur + exit
-
-
-
+** Trouve la carte réseau active de la machine (hors loopback)
+** et retourne son nom (ex: "eth0").
+** Le loopback ("lo") est l'interface virtuelle qui permet à la machine
+** de communiquer avec elle-même.
 */
+char	*find_network_interface(void)
+{
+	static char		name[IF_NAMESIZE];
+	struct ifaddrs	*ifap;
+	struct ifaddrs	*it;
+	int				check;
+
+	check = getifaddrs(&ifap);
+	if (check < 0)
+	{
+		perror("getifaddrs() error");
+		exit(2);
+	}
+	it = ifap;
+	while (it != NULL)
+	{
+		if ((it->ifa_flags & IFF_UP) && !(it->ifa_flags & IFF_LOOPBACK))
+		{
+			ft_strcpy(name, it->ifa_name);
+			freeifaddrs(ifap);
+			return (name);
+		}
+		it = it->ifa_next;
+	}
+	freeifaddrs(ifap);
+	fprintf(stderr, "ft_malcolm: no network interface found.\n");
+	exit(2);
+}
+
