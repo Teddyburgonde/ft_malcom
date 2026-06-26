@@ -20,6 +20,7 @@ int	main(int argc, char **argv)
 	setup_signal();
 	raw_socket_fd = create_raw_socket();
 	interface = find_network_interface();
+	printf("Found available interface: %s\n", interface);
 	bind_network_interface(raw_socket_fd, interface);
 	found = wait_arp_request(raw_socket_fd, &cfg);
 	if (found)

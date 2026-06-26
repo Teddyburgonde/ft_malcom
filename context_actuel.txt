@@ -39,6 +39,22 @@ UTILS (créé cette session) :
 - utils.c : ft_strcpy (déplacé depuis network.c, plus static) + ft_memcpy
   (copie binaire, ne s'arrête pas aux \0). Prototypes dans ft_malcom.h, dans le Makefile.
 
+MESSAGES D'AFFICHAGE (alignés sur l'exemple du sujet, page 9) :
+- main.c : "Found available interface: %s"
+- wait_arp_request : "An ARP request has been broadcast." + "mac address of
+  request: ..." (sender_mac formaté) + "IP address of request: ..." (inet_ntop)
+- send_arp_reply : "Now sending an ARP reply..." avant sendto + "Sent an ARP
+  reply packet, you may now check the arp table on the target." après
+- main.c : "Exiting program..." à la fin
+
+MESSAGES D'ERREUR EXACTS (vérifiés sur le PDF du sujet) :
+- IP : "ft_malcolm: unknown host or invalid IP address: (X)." -> AVEC point final
+- MAC : "ft_malcolm: invalid mac address: (X)" -> SANS point final
+- (le CLAUDE.md notait l'IP sans point : c'est une erreur, suivre le PDF)
+
+NORME : le sujet ne mentionne PAS la Norm de 42. Organisation libre, commentaires
+// autorisés. Correction humaine.
+
 STRUCTURES :
 - t_arp_packet (28 o) et t_ethernet_frame (14 o) ont __attribute__((packed))
   -> pas de padding, buffer = 42 octets exact sur le réseau.

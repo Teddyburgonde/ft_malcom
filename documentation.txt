@@ -97,7 +97,7 @@ Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
 8. ENVOYER LA RÉPONSE ARP
 ─ Envoyer le paquet via sendto ✅
 ─ Vérifier l'envoi (pas d'erreur) ✅
-─ Afficher confirmation (optionnel) ❌
+─ Afficher confirmation (messages d'affichage du sujet) ✅
 
 9. QUITTER PROPREMENT
 ─ Fermer la socket (close) ✅

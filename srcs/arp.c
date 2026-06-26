@@ -7,6 +7,8 @@ int	wait_arp_request(int raw_socket_fd, t_config *cfg)
 {
 	unsigned char	buffer[42];
 	t_arp_packet	*arp;
+	struct in_addr	sender;
+	char			ip_str[INET_ADDRSTRLEN];
 	int				check;
 
 	arp = (t_arp_packet *)(buffer + sizeof(t_ethernet_frame));
@@ -22,7 +24,16 @@ int	wait_arp_request(int raw_socket_fd, t_config *cfg)
 		}
 		if (ntohs(arp->operation) == ARP_REQUEST
 			&& arp->target_ip == cfg->source_ip.s_addr)
+		{
+			printf("An ARP request has been broadcast.\n");
+			printf("mac address of request: %02x:%02x:%02x:%02x:%02x:%02x\n",
+				arp->sender_mac[0], arp->sender_mac[1], arp->sender_mac[2],
+				arp->sender_mac[3], arp->sender_mac[4], arp->sender_mac[5]);
+			sender.s_addr = arp->sender_ip;
+			inet_ntop(AF_INET, &sender, ip_str, sizeof(ip_str));
+			printf("IP address of request: %s\n", ip_str);
 			return (1);
+		}
 	}
 	return (0);
 }
@@ -75,6 +86,8 @@ int	send_arp_reply(int raw_socket_fd, t_config *cfg, const char *interface)
 	device.sll_halen = MAC_LEN;
 	ft_memcpy(device.sll_addr, cfg->target_mac, MAC_LEN);
 	// Envoie de la trame
+	printf("Now sending an ARP reply to the target address with spoofed source, "
+		"please wait...\n");
 	check = sendto(raw_socket_fd, buffer, sizeof(buffer), 0,
 			(struct sockaddr *)&device, sizeof(device));
 	if (check < 0)
@@ -82,5 +95,7 @@ int	send_arp_reply(int raw_socket_fd, t_config *cfg, const char *interface)
 		perror("sendto() error");
 		exit(2);
 	}
+	printf("Sent an ARP reply packet, you may now check the arp table on the "
+		"target.\n");
 	return (1);
 }
