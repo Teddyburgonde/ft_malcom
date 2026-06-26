@@ -55,7 +55,7 @@ typedef struct s_arp_packet
 	uint32_t	sender_ip;		/* Adresse IP de l'émetteur */
 	uint8_t		target_mac[MAC_LEN];	/* Adresse MAC de la cible */
 	uint32_t	target_ip;		/* Adresse IP de la cible */
-}	t_arp_packet;
+}	__attribute__((packed))	t_arp_packet;
 
 /*
 ** Structure d'une Ethernet Frame (header Ethernet)
@@ -65,7 +65,7 @@ typedef struct s_ethernet_frame
 	uint8_t		dest_mac[MAC_LEN];	/* Adresse MAC de destination */
 	uint8_t		src_mac[MAC_LEN];	/* Adresse MAC source */
 	uint16_t	ethertype;		/* Type Ethernet (0x0806 pour ARP) */
-}	t_ethernet_frame;
+}	__attribute__((packed))	t_ethernet_frame;
 
 /*
 ** Structure qui regroupe les 4 arguments parsés du programme

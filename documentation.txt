@@ -75,7 +75,7 @@ Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
 5. SOCKET & RÉSEAU
 ─ Créer une raw socket (AF_PACKET) ✅
 ─ Bind la socket à une interface réseau ✅
-─ Tester qu'elle se crée sans erreur ❌
+─ Tester qu'elle se crée sans erreur ✅ (retours socket/setsockopt/bind vérifiés)
 
 6. ATTENDRE UNE REQUÊTE ARP
 ─ Boucle d'écoute sur la socket (recvfrom) ✅
@@ -101,18 +101,19 @@ Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
 
 9. QUITTER PROPREMENT
 ─ Fermer la socket (close) ✅
-─ Libérer la mémoire ❌
-─ Afficher "Exiting program..." ❌
-─ Exit code 0 ❌
+─ Libérer la mémoire ✅ (pas de malloc dans le projet)
+─ Afficher "Exiting program..." ✅
+─ Exit code 0 ✅
 
 10. GESTION D'ERREURS GLOBALE
-─ Aucun crash (segfault, etc) ❌
-─ Gestion des erreurs socket ❌
-─ Messages d'erreur exacts du sujet ❌
-─ Cleanup même en cas d'erreur ❌
+─ Aucun crash (segfault, etc) ✅ (relu : buffers, casts, mac parsing OK)
+─ Gestion des erreurs socket ✅ (socket/setsockopt/bind/sendto vérifiés)
+─ Messages d'erreur exacts du sujet ✅ (point en trop retiré sur le msg IP)
+─ Cleanup même en cas d'erreur ✅
+─ Ctrl+C instantané (sigaction sans SA_RESTART + gestion EINTR) ✅
 
-11. TEST FINAL
-─ Compiler sans erreur ❌
+11. TEST FINAL (nécessite la VM Linux)
+─ Compiler sans erreur ❌ (à faire sur la VM)
 ─ Tester avec les bons arguments ❌
 ─ Tester avec arguments invalides ❌
 ─ Tester Ctrl+C ❌

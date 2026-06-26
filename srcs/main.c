@@ -24,6 +24,7 @@ int	main(int argc, char **argv)
 	found = wait_arp_request(raw_socket_fd, &cfg);
 	if (found)
 		send_arp_reply(raw_socket_fd, &cfg, interface);
+	printf("Exiting program...\n");
 	close(raw_socket_fd);
 	return (0);
 }

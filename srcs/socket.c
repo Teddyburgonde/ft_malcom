@@ -29,6 +29,12 @@ int create_raw_socket(void)
 	}
 	timeout.tv_sec = 5;
 	timeout.tv_usec = 0;
-	setsockopt(raw_socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-	return raw_socket;
+	if (setsockopt(raw_socket, SOL_SOCKET, SO_RCVTIMEO, &timeout,
+			sizeof(timeout)) < 0)
+	{
+		perror("setsockopt() error");
+		close(raw_socket);
+		exit(2);
+	}
+	return (raw_socket);
 }

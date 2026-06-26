@@ -15,7 +15,7 @@ int	wait_arp_request(int raw_socket_fd, t_config *cfg)
 		check = recvfrom(raw_socket_fd, buffer, sizeof(buffer), 0, NULL, NULL);
 		if (check < 0)
 		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK)
+			if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)
 				continue;
 			perror("recvfrom() error");
 			exit(2);
