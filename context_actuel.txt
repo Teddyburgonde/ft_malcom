@@ -59,14 +59,49 @@ STRUCTURES :
 - t_arp_packet (28 o) et t_ethernet_frame (14 o) ont __attribute__((packed))
   -> pas de padding, buffer = 42 octets exact sur le réseau.
 
+CE QUI A ÉTÉ TESTÉ CETTE SESSION (sur la VM Debian de l'école) :
+- Étape 1 (permissions) : ✅ non-root rejeté, root sans args -> usage affiché
+- Étape 2 (spoof + table ARP cible) :
+  - Échec sur le réseau physique de l'école (host <-> VM, via ifconfig/ip addr) :
+    la vraie réponse ARP du noyau de la VM écrasait la fausse reply -> la table
+    ARP du host gardait le vrai MAC. Probable protection réseau de l'école
+    (switch avec Dynamic ARP Inspection / port security) qui bloque ou
+    neutralise les trames forgées.
+  - ✅ Réussi en environnement Docker isolé (voir plus bas) : table ARP de
+    `target` empoisonnée avec le faux MAC, confirmé par `ip neigh show`.
+
+ENVIRONNEMENT DE TEST DOCKER (créé cette session, inspiré du repo externe
+"kiroussa" qui utilise la même approche) :
+- Dockerfile (racine du projet) : image Alpine, installe build-base +
+  linux-headers + iputils + iproute2 + tcpdump, copie le projet, compile avec
+  `make fclean && make` (fclean obligatoire : sinon les objets/binaire déjà
+  compilés sur la VM (glibc) sont copiés tels quels et `make` ne les
+  recompile pas pour Alpine/musl -> "not found" à l'exécution)
+- docker-compose.yml : 2 conteneurs sur un réseau bridge isolé dédié
+  (172.20.0.0/24, sans lien avec le réseau de l'école) :
+  - `attacker` (172.20.0.10) : lance ft_malcolm
+  - `target` (172.20.0.20) : la victime, dont on vérifie la table ARP
+  - cap_add NET_ADMIN + NET_RAW sur les deux (raw sockets + gestion ARP)
+- Cibles Makefile ajoutées (en plus des règles obligatoires all/clean/
+  fclean/re, inchangées) : `drun` (build --no-cache + up -d), `dattacker`
+  (shell dans attacker), `dtarget` (shell dans target), `ddown` (down)
+- Test réalisé : IP usurpée (source_ip) = 172.20.0.50, une IP inutilisée par
+  aucun conteneur (évite la concurrence avec une vraie réponse, contrairement
+  au test école où source_ip = IP réelle de la VM)
+  -> `./ft_malcolm 172.20.0.50 aa:bb:cc:dd:ee:ff 172.20.0.20 <mac target>`
+  -> ping depuis target vers 172.20.0.50 déclenche bien la requête, ft_malcolm
+     répond, `ip neigh show 172.20.0.50` sur target affiche le faux MAC ✅
+- kiroussa/ (dossier présent dans le repo local mais volontairement PAS
+  suivi par git, sur demande de l'utilisateur - c'est le repo perso d'une
+  autre personne ayant fini le projet, gardé seulement comme référence)
+
 CE QUI RESTE À FAIRE :
-- Section 11 : TESTS RÉELS SUR LA VM LINUX (nécessite l'accès VM)
-  - Compiler sur la VM (impossible sur Mac : header netpacket/packet.h Linux-only)
-  - Lancer avec les bons args (root) + déclencher une ARP request depuis la cible
-  - Vérifier que la table ARP de la cible est bien empoisonnée
-    (source_ip -> source_mac falsifié)
-  - Tester arguments invalides (messages d'erreur exacts)
-  - Tester Ctrl+C pendant l'attente (doit quitter immédiatement)
+  - Tester le comportement avec tcpdump (la reply ne doit partir qu'après une
+    requête ARP sur le réseau, pas nécessairement de la cible) - tcpdump déjà
+    installé dans l'image Docker, test pas encore fait
+  - Tester arguments invalides (messages d'erreur exacts) - pas encore fait
+  - Tester Ctrl+C pendant l'attente (doit quitter immédiatement) - pas encore
+    fait (note : possible dans le conteneur attacker avec Ctrl+C classique)
 
 PRÉFÉRENCES DE TRAVAIL (déjà dans CLAUDE.md) :
 - Cours d'abord (explication + petits exemples), laisser l'utilisateur essayer

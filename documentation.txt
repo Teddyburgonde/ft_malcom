@@ -112,12 +112,24 @@ Comment envoyer un message à TOUT LE RÉSEAU (pas juste à une machine)
 ─ Cleanup même en cas d'erreur ✅
 ─ Ctrl+C instantané (sigaction sans SA_RESTART + gestion EINTR) ✅
 
-11. TEST FINAL (nécessite la VM Linux)
-─ Compiler sans erreur ❌ (à faire sur la VM)
-─ Tester avec les bons arguments ❌
-─ Tester avec arguments invalides ❌
-─ Tester Ctrl+C ❌
-─ Vérifier table ARP de la cible ❌
+11. TEST FINAL (sur la VM Linux + env Docker isolé)
+─ Compiler sans erreur ✅ (VM + image Docker Alpine)
+─ Tester permissions (non-root / root sans args) ✅ (sur la VM)
+─ Tester avec les bons arguments ✅ (via Docker, 2 conteneurs attacker/target,
+  voir Dockerfile + docker-compose.yml : table ARP de target empoisonnée,
+  confirmé avec `ip neigh show`)
+─ Tester avec arguments invalides ❌ (à faire)
+─ Tester Ctrl+C ❌ (à faire)
+─ Vérifier table ARP de la cible ✅ (via Docker, cf ci-dessus)
+─ Tester comportement avec tcpdump (reply envoyée seulement après une requête) ❌ (à faire)
+
+NOTE : le test host<->guest sur le réseau physique de l'école a échoué (la
+vraie réponse du noyau écrasait la fausse) car le réseau scolaire bloque/
+écrase probablement les trames ARP falsifiées (protection switch type DAI).
+Solution : tester dans un environnement Docker isolé (2 conteneurs sur un
+réseau bridge dédié, voir Dockerfile / docker-compose.yml / cibles Makefile
+`drun`, `dattacker`, `dtarget`, `ddown`), inspiré du repo kiroussa (non
+inclus dans le suivi git de ce repo).
 
 
 

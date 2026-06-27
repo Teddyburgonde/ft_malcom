@@ -1,0 +1,31 @@
+networks:
+  malcolm-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+services:
+  attacker:
+    build: .
+    container_name: attacker
+    networks:
+      malcolm-net:
+        ipv4_address: 172.20.0.10
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    stdin_open: true
+    tty: true
+
+  target:
+    build: .
+    container_name: target
+    networks:
+      malcolm-net:
+        ipv4_address: 172.20.0.20
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    stdin_open: true
+    tty: true

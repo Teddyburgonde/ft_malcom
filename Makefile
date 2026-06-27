@@ -34,4 +34,18 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+# Cibles de test Docker (env isole, voir Dockerfile / docker-compose.yml)
+drun:
+	sudo docker-compose build --no-cache
+	sudo docker-compose up -d
+
+ddown:
+	sudo docker-compose down
+
+dattacker:
+	sudo docker exec -it attacker sh
+
+dtarget:
+	sudo docker exec -it target sh
+
+.PHONY: all clean fclean re drun ddown dattacker dtarget
