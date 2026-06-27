@@ -109,7 +109,7 @@ make ddown        # arrête et supprime les conteneurs
 5. Vérifier que `target` a bien été trompé :
 
    ```sh
-   ip neigh show 172.20.0.50
+   arp -a
    ```
 
    Le MAC affiché doit être `aa:bb:cc:dd:ee:ff` (le faux), pas un vrai MAC.

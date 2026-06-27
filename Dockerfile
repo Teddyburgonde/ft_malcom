@@ -5,7 +5,8 @@ RUN apk add --no-cache \
 		linux-headers \
 		iputils \
 		iproute2 \
-		tcpdump
+		tcpdump \
+		net-tools
 
 WORKDIR /app
 COPY . /app/
