@@ -19,7 +19,7 @@ int	wait_arp_request(int raw_socket_fd, t_config *cfg)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)
 				continue;
-			perror("recvfrom() error");
+			printf("recvfrom() error\n");
 			exit(2);
 		}
 		if (ntohs(arp->operation) == ARP_REQUEST
@@ -92,7 +92,7 @@ int	send_arp_reply(int raw_socket_fd, t_config *cfg, const char *interface)
 			(struct sockaddr *)&device, sizeof(device));
 	if (check < 0)
 	{
-		perror("sendto() error");
+		printf("sendto() error\n");
 		exit(2);
 	}
 	printf("Sent an ARP reply packet, you may now check the arp table on the "

@@ -5,11 +5,7 @@ Permet de savoir si utilisateur est root.
 */
 int	is_root(void)
 {
-	if (getuid() != 0)
-	{
-		return false;
-	}
-	return true;
+	return getuid() == 0;
 }
 
 /*
@@ -24,7 +20,7 @@ int create_raw_socket(void)
 	raw_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
 	if (raw_socket < 0)
 	{
-		perror("socket() error");
+		printf("socket() error\n");
 		exit(2);
 	}
 	timeout.tv_sec = 5;
@@ -32,7 +28,7 @@ int create_raw_socket(void)
 	if (setsockopt(raw_socket, SOL_SOCKET, SO_RCVTIMEO, &timeout,
 			sizeof(timeout)) < 0)
 	{
-		perror("setsockopt() error");
+		printf("setsockopt() error\n");
 		close(raw_socket);
 		exit(2);
 	}
