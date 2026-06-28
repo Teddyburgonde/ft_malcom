@@ -1,0 +1,2 @@
+- ne pas utiliser bind.
+- ne pas utiliser perror
