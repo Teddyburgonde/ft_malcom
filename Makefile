@@ -36,11 +36,11 @@ re: fclean all
 
 # Cibles de test Docker (env isole, voir Dockerfile / docker-compose.yml)
 drun:
-	sudo docker-compose build --no-cache
-	sudo docker-compose up -d
+	sudo docker compose build --no-cache
+	sudo docker compose up -d
 
 ddown:
-	sudo docker-compose down
+	sudo docker compose down
 
 dattacker:
 	sudo docker exec -it attacker sh
