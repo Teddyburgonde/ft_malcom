@@ -138,3 +138,15 @@ Depuis le conteneur `attacker` :
 ```
 
 Les deux doivent afficher un message d'erreur exact et quitter sans crash.
+
+### Vider la table ARP
+
+```sh
+ip neigh flush all
+```
+
+### Supprimer tous les conteneurs et images Docker
+
+```sh
+docker rm -f $(docker ps -aq) && docker rmi -f $(docker images -q)
+```
